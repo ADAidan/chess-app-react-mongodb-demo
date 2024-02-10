@@ -30,4 +30,16 @@ router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
 });
 
+router.post('/signup', async function(req, res, next) {
+  try {
+    const { username } = req.body;
+    const user = new User({ username });
+    await user.save();
+    res.status(201).json({ message: 'Username set successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to set username' });
+  }
+});
+
 module.exports = router;
