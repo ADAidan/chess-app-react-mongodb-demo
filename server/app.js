@@ -6,8 +6,6 @@ var logger = require('morgan');
 const cors = require('cors');
 const mongoose = require('mongoose');
 
-const User = require('./models/user');
-
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
@@ -18,15 +16,6 @@ main().catch(err => console.log(err));
 async function main() {
   await mongoose.connect('mongodb+srv://ADyer4201:bzAo29ZAYXHKhP5t@chessdb.svcaru7.mongodb.net');
   console.log('Connected to MongoDB');
-  
-  const Aidan = new User({ username: 'Aidan' });
-
-  await Aidan.save();
-
-  Aidan.welcome();
-
-  const user = await User.findOne({ username: /^Aidan/ });
-  console.log(user);
 }
 
 app.use(cors({
