@@ -35,6 +35,7 @@ router.post('/signup', async function(req, res, next) {
     const { username } = req.body;
     const user = new User({ username });
     await user.save();
+    user.welcome();
     res.status(201).json({ message: 'Username set successfully' });
   } catch (error) {
     console.error(error);
