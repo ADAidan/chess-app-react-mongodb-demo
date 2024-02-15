@@ -16,7 +16,10 @@ const ChessGame = () => {
     function makeRandomMove(afterTurn) {
         console.log('makeRandomMove called')
         const newGame = new Chess(afterTurn);
-        if (newGame.isGameOver()) return;
+        if (newGame.isGameOver()) {
+            gameOver(newGame);
+            return;
+        };
 
         if(newGame.turn() === 'b') {
             console.log('making random move')
@@ -40,6 +43,28 @@ const ChessGame = () => {
         setTimeout(makeRandomMove(move.after), 200);
         return true;
     }
+
+    const gameOver = (gameEnd) => {
+        switch (true) {
+            case gameEnd.isCheckmate():
+                console.log('checkmate');
+                break;
+            case gameEnd.isDraw():
+                console.log('draw');
+                break;
+            case gameEnd.isStalemate():
+                console.log('stalemate');
+                break;
+            case gameEnd.isThreefoldRepetition():
+                console.log('threefold repetition');
+                break;
+            case gameEnd.isInsufficientMaterial():
+                console.log('insufficient material');
+                break;
+            default:
+                console.log('game over');
+        }
+    };
 
     return (
         <div className='game-container'>
