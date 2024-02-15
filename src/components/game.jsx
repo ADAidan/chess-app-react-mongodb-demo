@@ -1,6 +1,57 @@
+import React, { useState } from 'react';
+import { Chessboard } from 'react-chessboard';
+import { Chess } from 'chess.js';
+import './game.css';
+
 const ChessGame = () => {
+    const [game, setGame] = useState(new Chess());
+
+    function makeAMove(move, fen) {
+        const gameCopy = new Chess(fen);
+        const result = gameCopy.move(move);
+        setGame(gameCopy);
+        return result; // null if the move was illegal, the move object if the move was legal
+    }
+
+    function makeRandomMove(afterTurn) {
+        console.log('makeRandomMove called')
+        const newGame = new Chess(afterTurn);
+        if (newGame.isGameOver()) return;
+
+        if(newGame.turn() === 'b') {
+            console.log('making random move')
+            const possibleMoves = newGame.moves();
+            const randomIndex = Math.floor(Math.random() * possibleMoves.length);
+            makeAMove(possibleMoves[randomIndex], newGame.fen());
+        }
+    }
+
+    function onDrop(sourceSquare, targetSquare) {
+        const move = makeAMove({
+        from: sourceSquare,
+        to: targetSquare,
+        promotion: "q", // always promote to a queen for example simplicity
+        }, game.fen());
+
+        console.log(move)
+
+        // illegal move
+        if (move === null) return false;
+        setTimeout(makeRandomMove(move.after), 200);
+        return true;
+    }
+
     return (
-        <div>Chess Page</div>
+        <div className='game-container'>
+            <div className='chessboard-container'>
+                <div>Opponent</div>
+                <Chessboard position={game.fen()} onPieceDrop={onDrop} id='BasicBoard'/>
+                <div>Player</div>
+            </div>
+            <div className='sidebar-container'>
+                <div>controls</div>
+            </div>
+        </div>
     );
 };
 
