@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Chessboard } from 'react-chessboard';
 import { Chess } from 'chess.js';
 import MoveHistory from './move-history';
+import { ResignButton, DrawButton } from './buttons';
 import './game.css';
 
 const ChessGame = () => {
@@ -113,6 +114,10 @@ const ChessGame = () => {
             </div>
             <div className='sidebar-container'>
                 <MoveHistory history={moveHistory}/>
+                <div className='buttons'>
+                    <ResignButton />
+                    <DrawButton />
+                </div>
             </div>
         </div>
     );

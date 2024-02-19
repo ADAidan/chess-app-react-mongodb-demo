@@ -15,11 +15,11 @@ li p {
     flex-direction: column;
     justify-content: flex-start;
     align-items: flex-start;
-    flex: 1;
+    flex: .75;
     overflow: scroll;
     width: 100%;
     text-align: left;
-    margin: 1rem 0;
+    margin-top: 1rem;
 }
 
 .move-history-container div {

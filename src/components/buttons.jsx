@@ -1,11 +1,14 @@
+import React from 'react';
+import './buttons.css';
+
 export const ResignButton = () => {
     return (
-        <button>Resign</button>
+        <button className='resign-button'>Resign</button>
     );
 };
 
 export const DrawButton = () => {
     return (
-        <button>Offer Draw</button>
+        <button className='draw-button'>Offer Draw</button>
     );
 };
