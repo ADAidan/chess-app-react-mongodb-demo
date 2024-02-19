@@ -6,28 +6,8 @@ import { ResignButton, DrawButton } from './buttons';
 import './game.css';
 
 const ChessGame = () => {
-    const [game, setGame] = useState(new Chess("rnb1kQ2/1p1p1p2/p6B/2pPp3/4P1n1/8/PPP2PPP/RN2KBNR b KQq - 0 10"));
-    const [moveHistory, setMoveHistory] = useState([
-        "e4",
-        "e5",
-        "Qh5",
-        "Qg5",
-        "Qxg5",
-        "a6",
-        "d4",
-        "Bd6",
-        "d5",
-        "c5",
-        "Qg4",
-        "Nf6",
-        "Qxg7",
-        "h6",
-        "Qxh8+",
-        "Bf8",
-        "Bxh6",
-        "Ng4",
-        "Qxf8#"
-      ]);
+    const [game, setGame] = useState(new Chess());
+    const [moveHistory, setMoveHistory] = useState([]);
 
     useEffect(() => {
         console.log('moveHistory', moveHistory);
