@@ -8,6 +8,9 @@ import './game.css';
 const ChessGame = () => {
     const [game, setGame] = useState(new Chess());
     const [moveHistory, setMoveHistory] = useState([]);
+    const [moveFrom, setMoveFrom] = useState("");
+    const [rightClickedSquares, setRightClickedSquares] = useState({});
+    const [optionSquares, setOptionSquares] = useState({});
 
     useEffect(() => {
         console.log('moveHistory', moveHistory);
@@ -15,9 +18,14 @@ const ChessGame = () => {
 
     function makeAMove(move, fen) {
         const gameCopy = new Chess(fen);
-        const result = gameCopy.move(move);
-        setGame(gameCopy);
-        return result; // null if the move was illegal, the move object if the move was legal
+        try {
+            const result = gameCopy.move(move);
+            setGame(gameCopy);
+            return result;
+        } catch (error) {
+            console.log('encountered error:', error);
+        }
+        return false;
     }
 
     function makeRandomMove(newGame) {
@@ -33,9 +41,91 @@ const ChessGame = () => {
         }
     }
 
-    function onClick(square) {
+    function getMoveOptions(square) {
+        const moves = game.moves({
+          square,
+          verbose: true,
+        });
+        if (moves.length === 0) {
+          return false;
+        }
+    
+        const newSquares = {};
+        moves.map((move) => {
+          newSquares[move.to] = {
+            background:
+              game.get(move.to) && game.get(move.to).color !== game.get(square).color
+                ? "radial-gradient(circle, rgba(0,0,0,.1) 85%, transparent 85%)"
+                : "radial-gradient(circle, rgba(0,0,0,.1) 25%, transparent 25%)",
+            borderRadius: "50%",
+          };
+          return move;
+        });
+        newSquares[square] = {
+          background: "rgba(255, 255, 0, 0.4)",
+        };
+        setOptionSquares(newSquares);
+        return true;
+    }
+
+    function onSquareClick(square) {
+        setRightClickedSquares({});
+        let move;
+
+        function resetFirstMove(square) {
+            const hasOptions = getMoveOptions(square);
+            if (hasOptions) {
+                setMoveFrom(square)
+            } else {
+                setMoveFrom("")
+                setOptionSquares({})
+            };
+        }
+
+        if (!moveFrom) {
+            resetFirstMove(square);
+            return;
+        }
+
+        if (square in optionSquares) {
+            // make a function for this
+            move = makeAMove({
+                from: moveFrom,
+                to: square,
+                promotion: "q", // always promote to a queen for example simplicity
+            }, game.fen());
+        }
+
+        // check if the move is legal
+        if (!move) {
+            resetFirstMove(square);
+            return false;
+        }
         
+        setMoveFrom("");
+        setOptionSquares({});
+        setMoveHistory(moveHistory => [...moveHistory, move.san]);
+        const newGame = new Chess(move.after);
+        if (newGame.isGameOver()) {
+            gameOver(newGame);
+            return;
+        } else {
+            setTimeout(() => makeRandomMove(newGame), 1000);
+            return true;
+        }
     };
+
+    function onSquareRightClick(square) {
+        const colour = "rgba(235, 97, 80, .8)";
+        setRightClickedSquares({
+          ...rightClickedSquares,
+          [square]:
+            rightClickedSquares[square] &&
+            rightClickedSquares[square].backgroundColor === colour
+              ? undefined
+              : { backgroundColor: colour },
+        });
+    }
 
     function onDrop(sourceSquare, targetSquare) {
         const move = makeAMove({
@@ -87,8 +177,13 @@ const ChessGame = () => {
                 <div>Opponent</div>
                 <Chessboard 
                 position={game.fen()} 
-                onPieceClick={onClick}
                 onPieceDrop={onDrop} 
+                onSquareClick={onSquareClick}
+                onSquareRightClick={onSquareRightClick}
+                customSquareStyles={{
+                    ...optionSquares,
+                    ...rightClickedSquares,
+                }}
                 id='BasicBoard'/>
                 <div>Player</div>
             </div>
