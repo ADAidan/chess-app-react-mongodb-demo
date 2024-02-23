@@ -180,7 +180,7 @@ const ChessGame = () => {
     return (
         <div className='game-container'>
             <div className='chessboard-container'>
-                <div>{playerData.opponent} {playerData.playerElo ? `(${playerData.playerElo})` : ''}</div>
+                <div>{playerData.opponent ?? 'Opponent'} {playerData.opponentElo ? `(${playerData.opponentElo})` : ''}</div>
                 <Chessboard 
                 position={game.fen()} 
                 onPieceDrop={onDrop} 
@@ -191,7 +191,7 @@ const ChessGame = () => {
                     ...rightClickedSquares,
                 }}
                 id='BasicBoard'/>
-                <div>{playerData.player ?? 'New Player' } {playerData.playerElo ? `(${playerData.playerElo})` : ''}</div>
+                <div>{playerData.player ?? 'Player' } {playerData.playerElo ? `(${playerData.playerElo})` : ''}</div>
             </div>
             <div className='sidebar-container'>
                 <MoveHistory history={moveHistory}/>
