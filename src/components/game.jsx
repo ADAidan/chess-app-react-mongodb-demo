@@ -11,6 +11,12 @@ const ChessGame = () => {
     const [moveFrom, setMoveFrom] = useState("");
     const [rightClickedSquares, setRightClickedSquares] = useState({});
     const [optionSquares, setOptionSquares] = useState({});
+    const [playerData, setPlayerData] = useState({
+        player: 'Player',
+        playerElo: '1000',
+        opponent: 'Opponent',
+        opponentElo: '1000',
+    });
 
     useEffect(() => {
         console.log('moveHistory', moveHistory);
@@ -174,7 +180,7 @@ const ChessGame = () => {
     return (
         <div className='game-container'>
             <div className='chessboard-container'>
-                <div>Opponent</div>
+                <div>{playerData.opponent} {playerData.playerElo ? `(${playerData.playerElo})` : ''}</div>
                 <Chessboard 
                 position={game.fen()} 
                 onPieceDrop={onDrop} 
@@ -185,7 +191,7 @@ const ChessGame = () => {
                     ...rightClickedSquares,
                 }}
                 id='BasicBoard'/>
-                <div>Player</div>
+                <div>{playerData.player ?? 'New Player' } {playerData.playerElo ? `(${playerData.playerElo})` : ''}</div>
             </div>
             <div className='sidebar-container'>
                 <MoveHistory history={moveHistory}/>
