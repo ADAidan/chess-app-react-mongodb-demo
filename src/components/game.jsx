@@ -3,6 +3,7 @@ import { Chessboard } from 'react-chessboard';
 import { Chess } from 'chess.js';
 import MoveHistory from './move-history';
 import { ResignButton, DrawButton } from './buttons';
+import gameOver from '../utils/gameOver';
 import './game.css';
 
 const ChessGame = () => {
@@ -154,28 +155,6 @@ const ChessGame = () => {
             return true;
         }
     }
-
-    const gameOver = (gameEnd) => {
-        switch (true) {
-            case gameEnd.isCheckmate():
-                console.log('checkmate');
-                break;
-            case gameEnd.isDraw():
-                console.log('draw');
-                break;
-            case gameEnd.isStalemate():
-                console.log('stalemate');
-                break;
-            case gameEnd.isThreefoldRepetition():
-                console.log('threefold repetition');
-                break;
-            case gameEnd.isInsufficientMaterial():
-                console.log('insufficient material');
-                break;
-            default:
-                console.log('game over');
-        }
-    };
 
     return (
         <div className='game-container'>
