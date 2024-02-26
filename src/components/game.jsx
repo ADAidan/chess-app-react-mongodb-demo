@@ -7,9 +7,10 @@ import gameOver from '../utils/gameOver';
 import './game.css';
 
 const ChessGame = () => {
-    const [game, setGame] = useState(new Chess());
+    const [game, setGame] = useState(new Chess('r1bqk2r/p1ppp1Pp/1p5n/4Pp2/8/1P6/1PPP1P1P/RNB1KBNR w KQkq - 0 10'));
     const [moveHistory, setMoveHistory] = useState([]);
     const [moveFrom, setMoveFrom] = useState("");
+    const [moveTo, setMoveTo] = useState("");
     const [rightClickedSquares, setRightClickedSquares] = useState({});
     const [optionSquares, setOptionSquares] = useState({});
     const [playerData, setPlayerData] = useState({
@@ -19,9 +20,9 @@ const ChessGame = () => {
         opponentElo: '1000',
     });
 
-    useEffect(() => {
+    /* useEffect(() => {
         console.log('moveHistory', moveHistory);
-    }, [moveHistory]);
+    }, [moveHistory]); */
 
     function makeAMove(move, fen) {
         const gameCopy = new Chess(fen);
@@ -36,10 +37,10 @@ const ChessGame = () => {
     }
 
     function makeRandomMove(newGame) {
-        console.log('makeRandomMove called')
+        // console.log('makeRandomMove called')
 
         if(newGame.turn() === 'b') {
-            console.log('making random move')
+            // console.log('making random move')
             const possibleMoves = newGame.moves();
             const randomIndex = Math.floor(Math.random() * possibleMoves.length);
             const randomMove = possibleMoves[randomIndex];
@@ -76,6 +77,7 @@ const ChessGame = () => {
     }
 
     function onSquareClick(square) {
+        console.log('clicked square', square)
         setRightClickedSquares({});
         let move;
 
@@ -134,11 +136,24 @@ const ChessGame = () => {
         });
     }
 
-    function onDrop(sourceSquare, targetSquare) {
+    const onPieceClick = (piece) => {
+        console.log('clicked piece', piece)
+    };
+
+    const onPieceDragBegin = (piece, square) => {
+        console.log('dragging', piece, square)
+    };
+
+    const onPieceDragEnd = (piece, square) => {
+        console.log('dragged', piece, square)
+    };
+
+    function onDrop(sourceSquare, targetSquare, piece) {
+        console.log('dropped', sourceSquare, targetSquare)
         const move = makeAMove({
         from: sourceSquare,
         to: targetSquare,
-        promotion: "q", // always promote to a queen for example simplicity
+        promotion: piece[1].toLowerCase() ?? "q",
         }, game.fen());
 
         console.log(move)
@@ -163,8 +178,12 @@ const ChessGame = () => {
                 <Chessboard 
                 position={game.fen()} 
                 onPieceDrop={onDrop} 
+                onPieceDragBegin={onPieceDragBegin}
+                onPieceDragEnd={onPieceDragEnd}
+                onPieceClick={onPieceClick}
                 onSquareClick={onSquareClick}
                 onSquareRightClick={onSquareRightClick}
+                onPromotionPieceSelect={() => {console.log('promote')}}
                 customSquareStyles={{
                     ...optionSquares,
                     ...rightClickedSquares,
