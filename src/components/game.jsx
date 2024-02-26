@@ -143,7 +143,7 @@ const ChessGame = () => {
         console.log(move)
 
         // illegal move
-        if (!move) return false;
+        if (move === null) return false;
         setMoveHistory(moveHistory => [...moveHistory, move.san]);
         const newGame = new Chess(move.after);
         if (newGame.isGameOver()) {
