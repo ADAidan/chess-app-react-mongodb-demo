@@ -10,12 +10,27 @@ const ChessGame = () => {
     const [game, setGame] = useState(new Chess());
     const [moveHistory, setMoveHistory] = useState([]);
     const [rightClickedSquares, setRightClickedSquares] = useState({});
+    const [premoves, setPremoves] = useState({ 
+        'w': [], 
+        'b': [] 
+    });
     const [playerData, setPlayerData] = useState({
         player: 'Player',
         playerElo: '1000',
         opponent: 'Opponent',
         opponentElo: '1000',
     });
+
+    useEffect(() => {
+        console.log('turn:', game.turn());
+        console.log('premoves', premoves);
+        if (premoves[game.turn()]) {
+            console.log(premoves[game.turn()]);
+            const move = premoves[game.turn()].shift();
+            console.log('premove', move)
+            makeAMove(move, game.fen());
+        }
+    }, [game]);
 
     function makeAMove(move, fen) {
         const gameCopy = new Chess(fen);
@@ -60,24 +75,48 @@ const ChessGame = () => {
     }
 
     function onDrop(sourceSquare, targetSquare, piece) {
+        if (piece[0] !== game.turn()) {
+            console.log('color:', piece[0]);
+            setPremoves(prevPremoves => {
+                const newArray = [...prevPremoves[piece[0]]];
+                console.log('newArray:', newArray);
+                
+                newArray.push({
+                    from: sourceSquare,
+                    to: targetSquare,
+                    promotion: piece[1].toLowerCase() ?? "q",
+                });
+                console.log('newArray after push:', newArray);
+
+                return {
+                    ...prevPremoves,
+                    [piece[0]]: newArray,
+                }
+            });
+            return;
+        };
         const move = makeAMove({
         from: sourceSquare,
         to: targetSquare,
         promotion: piece[1].toLowerCase() ?? "q",
         }, game.fen());
 
+        console.log(move)
+
         // illegal move
         if (!move) return false;
 
         //legal move
-        setMoveHistory(moveHistory => [...moveHistory, move.san]);
-        const newGame = new Chess(move.after);
-        if (newGame.isGameOver()) {
-            gameOver(newGame);
-            return;
-        } else {
-            setTimeout(() => makeRandomMove(newGame), 1000);
-            return true;
+        if (move.color === 'w') {
+            setMoveHistory(moveHistory => [...moveHistory, move.san]);
+            const newGame = new Chess(move.after);
+            if (newGame.isGameOver()) {
+                gameOver(newGame);
+                return;
+            } else {
+                setTimeout(() => makeRandomMove(newGame), 2500);
+                return true;
+            }
         }
     }
 
