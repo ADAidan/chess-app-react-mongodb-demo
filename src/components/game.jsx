@@ -10,6 +10,7 @@ const ChessGame = () => {
     const [game, setGame] = useState(new Chess());
     const [moveHistory, setMoveHistory] = useState([]);
     const [rightClickedSquares, setRightClickedSquares] = useState({});
+    const [premoveSquares, setPremoveSquares] = useState({});
     const [premoves, setPremoves] = useState({ 
         'w': [], 
         'b': [] 
@@ -22,15 +23,36 @@ const ChessGame = () => {
     });
 
     useEffect(() => {
-        console.log('turn:', game.turn());
-        console.log('premoves', premoves);
+        //console.log('turn:', game.turn());
+        //console.log('premoves', premoves);
+        const color = "rgba(235, 97, 80, .8)";
+        premoves[game.turn()].map((move, index) => {
+            console.log('premove:', move);
+
+            setPremoveSquares(prevPremoveSquares => {
+                const premoveSquares = { ...prevPremoveSquares };
+                premoveSquares[move.from] = { backgroundColor: color}
+                premoveSquares[move.to] = { backgroundColor: color}
+                return premoveSquares;
+            });
+        });
         if (premoves[game.turn()]) {
-            console.log(premoves[game.turn()]);
+            //console.log(premoves[game.turn()]);
             const move = premoves[game.turn()].shift();
-            console.log('premove', move)
-            makeAMove(move, game.fen());
+            //console.log('premove', move)
+            if (move) {
+                makeAMove(move, game.fen());
+            }
         }
     }, [game]);
+
+    useEffect(() => {
+        console.log('premoves:', premoves);
+    }, [premoves]);
+
+    useEffect(() => {
+        console.log('premoveSquares:', premoveSquares);
+    }, [premoveSquares]);
 
     function makeAMove(move, fen) {
         const gameCopy = new Chess(fen);
@@ -62,13 +84,17 @@ const ChessGame = () => {
         setRightClickedSquares({});
     };
 
+    const onPremove = () => {
+
+    }
+
     function onSquareRightClick(square) {
         const color = "rgba(235, 97, 80, .8)";
         setRightClickedSquares({
           ...rightClickedSquares,
           [square]:
             rightClickedSquares[square] &&
-            rightClickedSquares[square].backgroundColor === colour
+            rightClickedSquares[square].backgroundColor === color
               ? undefined
               : { backgroundColor: color },
         });
@@ -76,17 +102,17 @@ const ChessGame = () => {
 
     function onDrop(sourceSquare, targetSquare, piece) {
         if (piece[0] !== game.turn()) {
-            console.log('color:', piece[0]);
+            // console.log('color:', piece[0]);
             setPremoves(prevPremoves => {
                 const newArray = [...prevPremoves[piece[0]]];
-                console.log('newArray:', newArray);
+                // console.log('newArray:', newArray);
                 
                 newArray.push({
                     from: sourceSquare,
                     to: targetSquare,
                     promotion: piece[1].toLowerCase() ?? "q",
                 });
-                console.log('newArray after push:', newArray);
+                // console.log('newArray after push:', newArray);
 
                 return {
                     ...prevPremoves,
@@ -131,6 +157,7 @@ const ChessGame = () => {
                 onSquareRightClick={onSquareRightClick}
                 onSquareClick={onSquareClick}
                 customSquareStyles={{
+                    ...premoveSquares,
                     ...rightClickedSquares,
                 }}
                 promotionDialogVariant='vertical'
