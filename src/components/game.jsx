@@ -7,7 +7,7 @@ import gameOver from '../utils/gameOver';
 import './game.css';
 
 const ChessGame = () => {
-    const [game, setGame] = useState(new Chess('r1bqk2r/p1ppp1Pp/1p5n/4Pp2/8/1P6/1PPP1P1P/RNB1KBNR w KQkq - 0 10'));
+    const [game, setGame] = useState(new Chess());
     const [moveHistory, setMoveHistory] = useState([]);
     const [rightClickedSquares, setRightClickedSquares] = useState({});
     const [playerData, setPlayerData] = useState({
@@ -16,10 +16,6 @@ const ChessGame = () => {
         opponent: 'Opponent',
         opponentElo: '1000',
     });
-
-    /* useEffect(() => {
-        console.log('moveHistory', moveHistory);
-    }, [moveHistory]); */
 
     function makeAMove(move, fen) {
         const gameCopy = new Chess(fen);
@@ -34,10 +30,7 @@ const ChessGame = () => {
     }
 
     function makeRandomMove(newGame) {
-        // console.log('makeRandomMove called')
-
         if(newGame.turn() === 'b') {
-            // console.log('making random move')
             const possibleMoves = newGame.moves();
             const randomIndex = Math.floor(Math.random() * possibleMoves.length);
             const randomMove = possibleMoves[randomIndex];
@@ -46,44 +39,37 @@ const ChessGame = () => {
         }
     }
 
-    const onSquareClick = (square) => {
-        console.log('clicked', square)
+    const onSquareClick = () => {
+        setRightClickedSquares({});
+    };
+
+    const onPieceDragBegin = () => {
         setRightClickedSquares({});
     };
 
     function onSquareRightClick(square) {
-        const colour = "rgba(235, 97, 80, .8)";
+        const color = "rgba(235, 97, 80, .8)";
         setRightClickedSquares({
           ...rightClickedSquares,
           [square]:
             rightClickedSquares[square] &&
             rightClickedSquares[square].backgroundColor === colour
               ? undefined
-              : { backgroundColor: colour },
+              : { backgroundColor: color },
         });
     }
 
-    const onPieceDragBegin = (piece, square) => {
-        console.log('dragging', piece, square)
-        setRightClickedSquares({});
-    };
-
-    const onPieceDragEnd = (piece, square) => {
-        console.log('dragged', piece, square)
-    };
-
     function onDrop(sourceSquare, targetSquare, piece) {
-        console.log('dropped', sourceSquare, targetSquare, piece)
         const move = makeAMove({
         from: sourceSquare,
         to: targetSquare,
         promotion: piece[1].toLowerCase() ?? "q",
         }, game.fen());
 
-        console.log(move)
-
         // illegal move
-        if (move === null) return false;
+        if (!move) return false;
+
+        //legal move
         setMoveHistory(moveHistory => [...moveHistory, move.san]);
         const newGame = new Chess(move.after);
         if (newGame.isGameOver()) {
@@ -103,7 +89,6 @@ const ChessGame = () => {
                 position={game.fen()} 
                 onPieceDrop={onDrop} 
                 onPieceDragBegin={onPieceDragBegin}
-                onPieceDragEnd={onPieceDragEnd}
                 onSquareRightClick={onSquareRightClick}
                 onSquareClick={onSquareClick}
                 customSquareStyles={{
