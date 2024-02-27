@@ -9,10 +9,7 @@ import './game.css';
 const ChessGame = () => {
     const [game, setGame] = useState(new Chess('r1bqk2r/p1ppp1Pp/1p5n/4Pp2/8/1P6/1PPP1P1P/RNB1KBNR w KQkq - 0 10'));
     const [moveHistory, setMoveHistory] = useState([]);
-    const [moveFrom, setMoveFrom] = useState("");
-    const [moveTo, setMoveTo] = useState("");
     const [rightClickedSquares, setRightClickedSquares] = useState({});
-    const [optionSquares, setOptionSquares] = useState({});
     const [playerData, setPlayerData] = useState({
         player: 'Player',
         playerElo: '1000',
@@ -49,79 +46,9 @@ const ChessGame = () => {
         }
     }
 
-    function getMoveOptions(square) {
-        const moves = game.moves({
-          square,
-          verbose: true,
-        });
-        if (moves.length === 0) {
-          return false;
-        }
-    
-        const newSquares = {};
-        moves.map((move) => {
-          newSquares[move.to] = {
-            background:
-              game.get(move.to) && game.get(move.to).color !== game.get(square).color
-                ? "radial-gradient(circle, rgba(0,0,0,.1) 85%, transparent 85%)"
-                : "radial-gradient(circle, rgba(0,0,0,.1) 25%, transparent 25%)",
-            borderRadius: "50%",
-          };
-          return move;
-        });
-        newSquares[square] = {
-          background: "rgba(255, 255, 0, 0.4)",
-        };
-        setOptionSquares(newSquares);
-        return true;
-    }
-
-    function onSquareClick(square) {
-        console.log('clicked square', square)
+    const onSquareClick = (square) => {
+        console.log('clicked', square)
         setRightClickedSquares({});
-        let move;
-
-        function resetFirstMove(square) {
-            const hasOptions = getMoveOptions(square);
-            if (hasOptions) {
-                setMoveFrom(square)
-            } else {
-                setMoveFrom("")
-                setOptionSquares({})
-            };
-        }
-
-        if (!moveFrom) {
-            resetFirstMove(square);
-            return;
-        }
-
-        if (square in optionSquares) {
-            // make a function for this
-            move = makeAMove({
-                from: moveFrom,
-                to: square,
-                promotion: "q", // always promote to a queen for example simplicity
-            }, game.fen());
-        }
-
-        // check if the move is legal
-        if (!move) {
-            resetFirstMove(square);
-            return false;
-        }
-        
-        setMoveFrom("");
-        setOptionSquares({});
-        setMoveHistory(moveHistory => [...moveHistory, move.san]);
-        const newGame = new Chess(move.after);
-        if (newGame.isGameOver()) {
-            gameOver(newGame);
-            return;
-        } else {
-            setTimeout(() => makeRandomMove(newGame), 1000);
-            return true;
-        }
     };
 
     function onSquareRightClick(square) {
@@ -136,12 +63,9 @@ const ChessGame = () => {
         });
     }
 
-    const onPieceClick = (piece) => {
-        console.log('clicked piece', piece)
-    };
-
     const onPieceDragBegin = (piece, square) => {
         console.log('dragging', piece, square)
+        setRightClickedSquares({});
     };
 
     const onPieceDragEnd = (piece, square) => {
@@ -149,7 +73,7 @@ const ChessGame = () => {
     };
 
     function onDrop(sourceSquare, targetSquare, piece) {
-        console.log('dropped', sourceSquare, targetSquare)
+        console.log('dropped', sourceSquare, targetSquare, piece)
         const move = makeAMove({
         from: sourceSquare,
         to: targetSquare,
@@ -180,14 +104,12 @@ const ChessGame = () => {
                 onPieceDrop={onDrop} 
                 onPieceDragBegin={onPieceDragBegin}
                 onPieceDragEnd={onPieceDragEnd}
-                onPieceClick={onPieceClick}
-                onSquareClick={onSquareClick}
                 onSquareRightClick={onSquareRightClick}
-                onPromotionPieceSelect={() => {console.log('promote')}}
+                onSquareClick={onSquareClick}
                 customSquareStyles={{
-                    ...optionSquares,
                     ...rightClickedSquares,
                 }}
+                promotionDialogVariant='vertical'
                 id='BasicBoard'/>
                 <div>{playerData.player ?? 'Player' } {playerData.playerElo ? `(${playerData.playerElo})` : ''}</div>
             </div>
