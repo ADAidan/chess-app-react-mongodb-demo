@@ -11,6 +11,8 @@ const ChessGame = () => {
     const [moveHistory, setMoveHistory] = useState([]);
     const [rightClickedSquares, setRightClickedSquares] = useState({});
     const [premoveSquares, setPremoveSquares] = useState({});
+    const [highlightedSquares, setHighlightedSquares] = useState({});
+    const [lastMove, setLastMove] = useState({});
     const [premoves, setPremoves] = useState({ 
         'w': [], 
         'b': [] 
@@ -21,6 +23,10 @@ const ChessGame = () => {
         opponent: 'Opponent',
         opponentElo: '1000',
     });
+
+    useEffect(() => {
+
+    }, [game]);
 
     useEffect(() => {
         //console.log('turn:', game.turn());
@@ -47,18 +53,26 @@ const ChessGame = () => {
     }, [game]);
 
     useEffect(() => {
-        console.log('premoves:', premoves);
+        //console.log('premoves:', premoves);
     }, [premoves]);
 
     useEffect(() => {
-        console.log('premoveSquares:', premoveSquares);
+        //console.log('premoveSquares:', premoveSquares);
     }, [premoveSquares]);
 
     function makeAMove(move, fen) {
+        console.log('making a move:', move)
         const gameCopy = new Chess(fen);
         try {
             const result = gameCopy.move(move);
+            const highlightMove = { 
+                'from' : result.from,
+                'to' : result.to,
+            };
+            console.log('result:', result);
             setGame(gameCopy);
+            setLastMove(move);
+            highlightLastMove(highlightMove);
             return result;
         } catch (error) {
             console.log('encountered error:', error);
@@ -87,6 +101,19 @@ const ChessGame = () => {
     const onPremove = () => {
 
     }
+
+    const highlightLastMove = (move) => {
+        const color = "rgba(255, 255, 51, 0.5)";
+        console.log('lastMove:', move)
+        if (lastMove) {
+            const sourceSquare = move.from;
+            const targetSquare = move.to;
+            setHighlightedSquares({
+                [sourceSquare]: { backgroundColor: color },
+                [targetSquare]: { backgroundColor: color },
+            });
+        }
+    };
 
     function onSquareRightClick(square) {
         const color = "rgba(235, 97, 80, .8)";
@@ -159,6 +186,7 @@ const ChessGame = () => {
                 customSquareStyles={{
                     ...premoveSquares,
                     ...rightClickedSquares,
+                    ...highlightedSquares,
                 }}
                 promotionDialogVariant='vertical'
                 id='BasicBoard'/>
