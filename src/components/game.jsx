@@ -25,14 +25,21 @@ const ChessGame = () => {
     });
 
     useEffect(() => {
-
+        if (premoves['w']) {
+            console.log(premoves['w']);
+            const move = premoves['w'].shift();
+            console.log('premove', move)
+            if (move) {
+                makeAMove(move, game.fen());
+            }
+        }
     }, [game]);
 
     useEffect(() => {
-        //console.log('turn:', game.turn());
-        //console.log('premoves', premoves);
+        console.log('premoves:', premoves);
+        console.log(premoves['w']);
         const color = "rgba(235, 97, 80, .8)";
-        premoves[game.turn()].map((move, index) => {
+        premoves['w'].map((move, index) => {
             console.log('premove:', move);
 
             setPremoveSquares(prevPremoveSquares => {
@@ -42,26 +49,13 @@ const ChessGame = () => {
                 return premoveSquares;
             });
         });
-        if (premoves[game.turn()]) {
-            //console.log(premoves[game.turn()]);
-            const move = premoves[game.turn()].shift();
-            //console.log('premove', move)
-            if (move) {
-                makeAMove(move, game.fen());
-            }
-        }
-    }, [game]);
-
-    useEffect(() => {
-        //console.log('premoves:', premoves);
     }, [premoves]);
 
     useEffect(() => {
-        //console.log('premoveSquares:', premoveSquares);
+        console.log('premoveSquares:', premoveSquares);
     }, [premoveSquares]);
 
     function makeAMove(move, fen) {
-        console.log('making a move:', move)
         const gameCopy = new Chess(fen);
         try {
             const result = gameCopy.move(move);
@@ -71,7 +65,7 @@ const ChessGame = () => {
             };
             console.log('result:', result);
             setGame(gameCopy);
-            setLastMove(move);
+            setLastMove(highlightMove);
             highlightLastMove(highlightMove);
             return result;
         } catch (error) {
