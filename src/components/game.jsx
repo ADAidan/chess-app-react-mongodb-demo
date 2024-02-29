@@ -60,7 +60,7 @@ const ChessGame = () => {
         });
     }, [premoves]);
 
-    function makeAMove(move, fen) {
+    function makeAMove(move, fen, san) {
         const gameCopy = new Chess(fen);
         try {
             const result = gameCopy.move(move);
@@ -68,6 +68,8 @@ const ChessGame = () => {
                 'from' : result.from,
                 'to' : result.to,
             };
+            console.log('move:', move)
+            setMoveHistory(moveHistory => [...moveHistory, result.san]);
             setGame(gameCopy);
             setLastMove(highlightMove);
             highlightLastMove(highlightMove);
@@ -84,7 +86,6 @@ const ChessGame = () => {
             const randomIndex = Math.floor(Math.random() * possibleMoves.length);
             const randomMove = possibleMoves[randomIndex];
             makeAMove(randomMove, newGame.fen());
-            setMoveHistory(moveHistory => [...moveHistory, randomMove]);
         }
     }
 
@@ -95,10 +96,6 @@ const ChessGame = () => {
     const onPieceDragBegin = (piece, square) => {
         setRightClickedSquares({});
     };
-
-    const onPremove = () => {
-
-    }
 
     const highlightLastMove = (move) => {
         const color = "rgba(255, 255, 51, 0.5)";
@@ -162,7 +159,6 @@ const ChessGame = () => {
 
         //legal move
         if (move.color === 'w') {
-            setMoveHistory(moveHistory => [...moveHistory, move.san]);
             const newGame = new Chess(move.after);
             if (newGame.isGameOver()) {
                 gameOver(newGame);
