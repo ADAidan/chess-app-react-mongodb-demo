@@ -18,30 +18,39 @@ const ChessGame = () => {
         'b': [] 
     });
     const [playerData, setPlayerData] = useState({
-        player: 'Player',
-        playerElo: '1000',
-        opponent: 'Opponent',
-        opponentElo: '1000',
+        player: {
+            name: 'Player',
+            elo: '1000',
+            color: 'w',
+        },
+        opponent: {
+            name: 'Opponent',
+            elo: '1000',
+            color: 'b',
+        }
     });
 
     useEffect(() => {
         if (premoves['w']) {
-            console.log(premoves['w']);
-            const move = premoves['w'].shift();
-            console.log('premove', move)
-            if (move) {
-                makeAMove(move, game.fen());
+            const move = premoves['w'][0];
+            if (move && game.turn() === 'w') {
+                setPremoveSquares(prevPremoveSquares => {
+                    const premoveSquares = { ...prevPremoveSquares };
+                    delete premoveSquares[move.from];
+                    delete premoveSquares[move.to];
+                    return premoveSquares;
+                });
+                const premove = makeAMove(move, game.fen());
+                if(premove) {
+                    premoves['w'].shift();
+                };
             }
         }
     }, [game]);
 
     useEffect(() => {
-        console.log('premoves:', premoves);
-        console.log(premoves['w']);
         const color = "rgba(235, 97, 80, .8)";
         premoves['w'].map((move, index) => {
-            console.log('premove:', move);
-
             setPremoveSquares(prevPremoveSquares => {
                 const premoveSquares = { ...prevPremoveSquares };
                 premoveSquares[move.from] = { backgroundColor: color}
@@ -51,10 +60,6 @@ const ChessGame = () => {
         });
     }, [premoves]);
 
-    useEffect(() => {
-        console.log('premoveSquares:', premoveSquares);
-    }, [premoveSquares]);
-
     function makeAMove(move, fen) {
         const gameCopy = new Chess(fen);
         try {
@@ -63,7 +68,6 @@ const ChessGame = () => {
                 'from' : result.from,
                 'to' : result.to,
             };
-            console.log('result:', result);
             setGame(gameCopy);
             setLastMove(highlightMove);
             highlightLastMove(highlightMove);
@@ -98,7 +102,6 @@ const ChessGame = () => {
 
     const highlightLastMove = (move) => {
         const color = "rgba(255, 255, 51, 0.5)";
-        console.log('lastMove:', move)
         if (lastMove) {
             const sourceSquare = move.from;
             const targetSquare = move.to;
@@ -132,17 +135,14 @@ const ChessGame = () => {
 
     function onDrop(sourceSquare, targetSquare, piece) {
         if (piece[0] !== game.turn()) {
-            // console.log('color:', piece[0]);
             setPremoves(prevPremoves => {
                 const newArray = [...prevPremoves[piece[0]]];
-                // console.log('newArray:', newArray);
                 
                 newArray.push({
                     from: sourceSquare,
                     to: targetSquare,
                     promotion: piece[1].toLowerCase() ?? "q",
                 });
-                // console.log('newArray after push:', newArray);
 
                 return {
                     ...prevPremoves,
@@ -157,8 +157,6 @@ const ChessGame = () => {
         promotion: piece[1].toLowerCase() ?? "q",
         }, game.fen());
 
-        console.log(move)
-
         // illegal move
         if (!move) return false;
 
@@ -170,7 +168,7 @@ const ChessGame = () => {
                 gameOver(newGame);
                 return;
             } else {
-                setTimeout(() => makeRandomMove(newGame), 2500);
+                setTimeout(() => makeRandomMove(newGame), 1000);
                 return true;
             }
         }
@@ -179,7 +177,7 @@ const ChessGame = () => {
     return (
         <div className='game-container'>
             <div className='chessboard-container'>
-                <div>{playerData.opponent ?? 'Opponent'} {playerData.opponentElo ? `(${playerData.opponentElo})` : ''}</div>
+                <div>{playerData.opponent.name ?? 'Opponent'} {playerData.opponent.elo ? `(${playerData.opponent.elo})` : ''}</div>
                 <Chessboard 
                 position={game.fen()} 
                 onPieceDrop={onDrop} 
@@ -193,7 +191,7 @@ const ChessGame = () => {
                 }}
                 promotionDialogVariant='vertical'
                 id='BasicBoard'/>
-                <div>{playerData.player ?? 'Player' } {playerData.playerElo ? `(${playerData.playerElo})` : ''}</div>
+                <div>{playerData.player.name ?? 'Player' } {playerData.player.elo ? `(${playerData.player.elo})` : ''}</div>
             </div>
             <div className='sidebar-container'>
                 <MoveHistory history={moveHistory}/>
