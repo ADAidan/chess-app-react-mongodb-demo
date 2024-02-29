@@ -86,10 +86,12 @@ const ChessGame = () => {
 
     const onSquareClick = () => {
         setRightClickedSquares({});
+        setPremoveSquares({});
     };
 
     const onPieceDragBegin = () => {
         setRightClickedSquares({});
+        setPremoveSquares({});
     };
 
     const onPremove = () => {
