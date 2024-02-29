@@ -84,14 +84,12 @@ const ChessGame = () => {
         }
     }
 
-    const onSquareClick = () => {
+    const onSquareClick = (square) => {
         setRightClickedSquares({});
-        setPremoveSquares({});
     };
 
-    const onPieceDragBegin = () => {
+    const onPieceDragBegin = (piece, square) => {
         setRightClickedSquares({});
-        setPremoveSquares({});
     };
 
     const onPremove = () => {
@@ -112,6 +110,15 @@ const ChessGame = () => {
     };
 
     function onSquareRightClick(square) {
+        if (premoves['w'].length) {
+            console.log('premoves:', premoves['w'], premoves)
+            setPremoveSquares({});
+            setPremoves({ 
+                'w': [], 
+                'b': [] 
+            });
+            return;
+        }
         const color = "rgba(235, 97, 80, .8)";
         setRightClickedSquares({
           ...rightClickedSquares,
