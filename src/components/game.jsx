@@ -32,13 +32,14 @@ const ChessGame = () => {
     });
 
     const randomMoveDelay = 1000;
+    const playerColor = playerData.player.color;
 
     //makes the first move in the premove queue
     useEffect(() => {
-        if (premoves['w']) {
+        if (premoves[playerColor]) {
             //first move in queue
-            const move = premoves['w'][0];
-            if (move && game.turn() === 'w') {
+            const move = premoves[playerColor][0];
+            if (move && game.turn() === playerColor) {
                 //removes the highlighted premove
                 setPremoveSquares(prevPremoveSquares => {
                     const premoveSquares = { ...prevPremoveSquares };
@@ -51,7 +52,7 @@ const ChessGame = () => {
                 if(premove) {
                     setPremoves(prevPremoves => {
                         const premoves = { ...prevPremoves };
-                        premoves['w'].shift();
+                        premoves[playerColor].shift();
                         return premoves;
                     });
                 };
@@ -62,7 +63,7 @@ const ChessGame = () => {
     //highlights the premoves
     useEffect(() => {
         const color = "rgba(235, 97, 80, .8)";
-        premoves['w'].map((move) => {
+        premoves[playerColor].map((move) => {
             setPremoveSquares(prevPremoveSquares => {
                 const premoveSquares = { ...prevPremoveSquares };
                 premoveSquares[move.from] = { backgroundColor: color}
@@ -111,13 +112,18 @@ const ChessGame = () => {
         } catch (error) {
             //displays the error in the console
             console.log('encountered error:', error);
+            setPremoveSquares({});
+            setPremoves({ 
+                'w': [], 
+                'b': [] 
+            });
             return false;
         }
     }
 
     function makeRandomMove(newGame) {
-        //checks if it is the bots trun and makes a random move
-        if(playerData.opponent.isBot && newGame.turn() === 'b') {
+        //checks if it is the bots turn and makes a random move
+        if(playerData.opponent.isBot && newGame.turn() === playerData.opponent.color) {
             const possibleMoves = newGame.moves();
             const randomIndex = Math.floor(Math.random() * possibleMoves.length);
             const randomMove = possibleMoves[randomIndex];
@@ -127,7 +133,7 @@ const ChessGame = () => {
 
     function onSquareRightClick(square) {
         //clear premoves after right clicking the board
-        if (premoves['w'].length) {
+        if (premoves[playerColor].length ?? premoveSquares) {
             setPremoveSquares({});
             setPremoves({ 
                 'w': [], 
@@ -193,6 +199,7 @@ const ChessGame = () => {
                 <div>{playerData.opponent.name ?? 'Opponent'} {playerData.opponent.elo ? `(${playerData.opponent.elo})` : ''}</div>
                 <Chessboard 
                 position={game.fen()} 
+                boardOrientation={playerData.player.color === 'w' ? 'white' : 'black'}
                 onPieceDrop={onDrop} 
                 onPieceDragBegin={onPieceDragBegin}
                 onSquareRightClick={onSquareRightClick}
