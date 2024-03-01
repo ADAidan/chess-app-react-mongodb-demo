@@ -27,30 +27,42 @@ const ChessGame = () => {
             name: 'Opponent',
             elo: '1000',
             color: 'b',
+            isBot: true,
         }
     });
 
+    const randomMoveDelay = 1000;
+
+    //makes the first move in the premove queue
     useEffect(() => {
         if (premoves['w']) {
+            //first move in queue
             const move = premoves['w'][0];
             if (move && game.turn() === 'w') {
+                //removes the highlighted premove
                 setPremoveSquares(prevPremoveSquares => {
                     const premoveSquares = { ...prevPremoveSquares };
                     delete premoveSquares[move.from];
                     delete premoveSquares[move.to];
                     return premoveSquares;
                 });
+                //makes the move and removes it from the queue
                 const premove = makeAMove(move, game.fen());
                 if(premove) {
-                    premoves['w'].shift();
+                    setPremoves(prevPremoves => {
+                        const premoves = { ...prevPremoves };
+                        premoves['w'].shift();
+                        return premoves;
+                    });
                 };
             }
         }
     }, [game]);
 
+    //highlights the premoves
     useEffect(() => {
         const color = "rgba(235, 97, 80, .8)";
-        premoves['w'].map((move, index) => {
+        premoves['w'].map((move) => {
             setPremoveSquares(prevPremoveSquares => {
                 const premoveSquares = { ...prevPremoveSquares };
                 premoveSquares[move.from] = { backgroundColor: color}
@@ -60,28 +72,52 @@ const ChessGame = () => {
         });
     }, [premoves]);
 
-    function makeAMove(move, fen, san) {
+    //hightlights the last move made in the game
+    useEffect(() => {
+        const color = "rgba(255, 255, 51, 0.5)";
+        setHighlightedSquares({
+            [lastMove.from]: { backgroundColor: color },
+            [lastMove.to]: { backgroundColor: color },
+        });
+    }, [lastMove]);
+
+    function makeAMove(move, fen) {
+        //creates a copy of the game to mutate
         const gameCopy = new Chess(fen);
         try {
             const result = gameCopy.move(move);
+            //checks if the game is over
+            if (result) {
+                const newGame = new Chess(result.after);
+                if (newGame.isGameOver()) {
+                    gameOver(newGame);
+                }
+            }
+            //makes a random move for the bot
+            if (playerData.opponent.isBot) {
+                setTimeout(() => {
+                    makeRandomMove(gameCopy);
+                }, randomMoveDelay);
+            };
             const highlightMove = { 
                 'from' : result.from,
                 'to' : result.to,
             };
-            console.log('move:', move)
+            //adds the moves san to the move history
             setMoveHistory(moveHistory => [...moveHistory, result.san]);
             setGame(gameCopy);
             setLastMove(highlightMove);
-            highlightLastMove(highlightMove);
             return result;
         } catch (error) {
+            //displays the error in the console
             console.log('encountered error:', error);
+            return false;
         }
-        return false;
     }
 
     function makeRandomMove(newGame) {
-        if(newGame.turn() === 'b') {
+        //checks if it is the bots trun and makes a random move
+        if(playerData.opponent.isBot && newGame.turn() === 'b') {
             const possibleMoves = newGame.moves();
             const randomIndex = Math.floor(Math.random() * possibleMoves.length);
             const randomMove = possibleMoves[randomIndex];
@@ -89,29 +125,9 @@ const ChessGame = () => {
         }
     }
 
-    const onSquareClick = (square) => {
-        setRightClickedSquares({});
-    };
-
-    const onPieceDragBegin = (piece, square) => {
-        setRightClickedSquares({});
-    };
-
-    const highlightLastMove = (move) => {
-        const color = "rgba(255, 255, 51, 0.5)";
-        if (lastMove) {
-            const sourceSquare = move.from;
-            const targetSquare = move.to;
-            setHighlightedSquares({
-                [sourceSquare]: { backgroundColor: color },
-                [targetSquare]: { backgroundColor: color },
-            });
-        }
-    };
-
     function onSquareRightClick(square) {
+        //clear premoves after right clicking the board
         if (premoves['w'].length) {
-            console.log('premoves:', premoves['w'], premoves)
             setPremoveSquares({});
             setPremoves({ 
                 'w': [], 
@@ -119,6 +135,7 @@ const ChessGame = () => {
             });
             return;
         }
+        //highlight the square that was right clicked
         const color = "rgba(235, 97, 80, .8)";
         setRightClickedSquares({
           ...rightClickedSquares,
@@ -131,7 +148,9 @@ const ChessGame = () => {
     }
 
     function onDrop(sourceSquare, targetSquare, piece) {
+        // check if the piece is the right color
         if (piece[0] !== game.turn()) {
+            //adds a premove to the queue
             setPremoves(prevPremoves => {
                 const newArray = [...prevPremoves[piece[0]]];
                 
@@ -149,26 +168,24 @@ const ChessGame = () => {
             return;
         };
         const move = makeAMove({
-        from: sourceSquare,
-        to: targetSquare,
-        promotion: piece[1].toLowerCase() ?? "q",
+            from: sourceSquare,
+            to: targetSquare,
+            promotion: piece[1].toLowerCase() ?? "q",
         }, game.fen());
 
-        // illegal move
-        if (!move) return false;
-
-        //legal move
-        if (move.color === 'w') {
-            const newGame = new Chess(move.after);
-            if (newGame.isGameOver()) {
-                gameOver(newGame);
-                return;
-            } else {
-                setTimeout(() => makeRandomMove(newGame), 1000);
-                return true;
-            }
-        }
+        //illegal move will be false
+        //legal move will be the move object
+        return move;
     }
+
+    //clear the right clicked squares when a square is clicked or dragged
+    const onSquareClick = () => {
+        setRightClickedSquares({});
+    };
+
+    const onPieceDragBegin = () => {
+        setRightClickedSquares({});
+    };
 
     return (
         <div className='game-container'>
