@@ -1,10 +1,11 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import './lobby.css';
 
 const Lobby = () => {
     return (
         <>
-            <div>Lobby</div>
+            <div className='lobby-container'>
+            </div>
         </>
     )
 };
