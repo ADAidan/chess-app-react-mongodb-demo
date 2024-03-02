@@ -1,10 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from 'react-router-dom';
 import GameCard from './game-card';
 import './lobby.css';
 
 const Lobby = () => {
-	const lobbies = [
+	const [lobbies, setLobbies] = useState([
 		{
 			gameName: 'ADAidan\'s game',
 			timeLimit: '10:00',
@@ -31,7 +31,7 @@ const Lobby = () => {
 				},
 			}
 		},
-	]
+	]);
 
 	return (
 		<>
@@ -40,9 +40,9 @@ const Lobby = () => {
 					margin: '1rem',
 				}}>Joinable Games</h1>
 				<Link to='/create'>Create Game</Link>
-				{lobbies.map((lobby) => {
+				{lobbies.map((lobby, index) => {
 					return (
-						<GameCard gameData={lobby} />
+						<GameCard gameData={lobby} key={index} />
 					)
 				})}
 			</div>
