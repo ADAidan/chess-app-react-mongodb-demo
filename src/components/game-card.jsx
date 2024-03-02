@@ -2,23 +2,7 @@ import React, { useState } from "react";
 import { Link } from 'react-router-dom';
 import './game-card.css';
 
-const GameCard = () => {
-	const [gameData, setGameData] = useState({
-		gameName: 'Game Name',
-		timeLimit: '10:00',
-		increment: '5',
-		players: {
-			player1: {
-				name : 'ADAidan',
-				elo: '1000',
-			},
-			player2: {
-				name: 'Player 2',
-				elo: '1000',
-			}
-		}
-	});
-
+const GameCard = ({gameData}) => {
 	const p1 = gameData.players.player1;
 	const p2 = gameData.players.player2;
 
