@@ -1,5 +1,11 @@
 const gameOver = (gameEnd) => {
     switch (true) {
+        case gameEnd === 'resign':
+            console.log('resign');
+            break;
+        case gameEnd === 'draw agreed':
+            console.log('draw agreed');
+            break;
         case gameEnd.isCheckmate():
             console.log('checkmate');
             break;
