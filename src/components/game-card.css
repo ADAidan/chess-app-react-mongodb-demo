@@ -1,3 +1,9 @@
+@media (prefers-color-scheme: light) {
+    .lobby-container .game-card {
+        background-color: #e8e8e8;
+    }
+}
+
 .game-card {
     display: flex;
     flex-direction: row;
