@@ -7,6 +7,7 @@ import {
   RouterProvider 
 } from 'react-router-dom'
 import ChessGame from './components/game.jsx'
+import Lobby from './components/lobby.jsx'
 import './index.css'
 
 const router = createBrowserRouter([
@@ -14,6 +15,10 @@ const router = createBrowserRouter([
     path: '/', 
     element: <App />,
     errorElement: <ErrorPage />
+  },
+  {
+    path: '/lobby',
+    element: <Lobby />,
   },
   {
     path: '/chess',
