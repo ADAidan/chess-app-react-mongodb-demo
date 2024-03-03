@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { Chessboard } from 'react-chessboard';
 import { Chess } from 'chess.js';
 import MoveHistory from './move-history';
@@ -195,6 +196,9 @@ const ChessGame = () => {
 
     return (
         <div className='game-container'>
+            <div className='home-button-container'>
+                <Link to='/lobby'>Chess</Link>
+            </div>
             <div className='chessboard-container'>
                 <div>{playerData.opponent.name ?? 'Opponent'} {playerData.opponent.elo ? `(${playerData.opponent.elo})` : ''}</div>
                 <Chessboard 
