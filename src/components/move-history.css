@@ -1,3 +1,13 @@
+@media (prefers-color-scheme: light) {
+    .sidebar-container .move-history-container {
+        box-shadow: #c0c0c0 0px 0px 5px;
+        border: #f0f0f0 1px solid;
+    }
+    .sidebar-container .move-history-container ol li:nth-child(even) {
+        background-color: #f0f0f0;
+    }
+}
+
 li div, li p {
     display: inline-block;
     padding: .1rem .5rem;
@@ -15,6 +25,9 @@ li p {
     flex-direction: column;
     justify-content: flex-start;
     align-items: flex-start;
+    border: #323232 1px solid;
+    border-radius: .5rem;
+    box-shadow: #323232 0px 0px 5px;
     flex: .75;
     overflow: scroll;
     width: 100%;

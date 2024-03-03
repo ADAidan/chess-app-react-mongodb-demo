@@ -21,6 +21,7 @@
     flex-direction: column;
     justify-content: flex-start;
     align-items: flex-start;
+    margin: .5rem 0 0 1rem;
     flex: 1;
     height: 100%;
 }
