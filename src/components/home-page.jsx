@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
+import { isValidUsername } from '../utils/validation'
 
 const HomePage = () => {
   const [data, setData] = useState([])
@@ -26,8 +27,17 @@ const HomePage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-
     console.log('Submitting form')
+
+    const isValid = isValidUsername(username)
+    console.log('isValid:', isValid)
+    if (isValid !== true) {
+      console.log('Invalid username:', isValid)
+      return
+    }
+
+    
+
     try {
       const response = await axios.post('http://localhost:3000/signup', {
         username
@@ -46,7 +56,7 @@ const HomePage = () => {
   return (
     <>
       <div>{data.message}</div>
-      <form  onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit}>
         <label>
           Username:
           <input
@@ -55,7 +65,7 @@ const HomePage = () => {
             onChange={handleChange}
           />
         </label>
-        <button type="submit">Sign Up</button>
+        <button type="submit">Next</button>
       </form>
     </>
   )
