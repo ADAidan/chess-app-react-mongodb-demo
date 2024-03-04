@@ -19,9 +19,9 @@ router.get('/', function(req, res, next) {
 
 router.get('/:user', function(req, res, next) {
   try {
-    User.find({ username: req.params.user }).then(user => {
+    User.findOne({ username: req.params.user }).then(user => {
       const jsonResponse = {
-        user: user
+        user
       }
       res.json(jsonResponse);
     });

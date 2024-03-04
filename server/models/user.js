@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 
 const UserSchema = new mongoose.Schema({
     username: String,
+    elo: Number
 });
 
 UserSchema.methods.welcome = function() {
