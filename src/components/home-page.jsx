@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
-import { isValidUsername } from '../utils/validation'
+import { isValidUsername, checkIfUsernameExists } from '../utils/validation'
 
 const HomePage = () => {
   const [data, setData] = useState([])
@@ -37,18 +37,27 @@ const HomePage = () => {
       return
     }
 
-    navigate('/lobby');
+    const usernameExists = checkIfUsernameExists(username);
+    if (usernameExists === true) {
+      console.log('successfully logged in')
+      sessionStorage.setItem('username', username)
+      navigate('/lobby');
+      return
+    }
 
     // Creates a user
-    /* try {
+    try {
       const response = await axios.post('http://localhost:3000/signup', {
-        username
+        username,
+        elo: 1000
       })
+      sessionStorage.setItem('username', username)
 
       console.log('Response:', response)
     } catch (error) {
       console.error('Error:', error)
-    } */
+    }
+    navigate('/lobby');
   };
 
   const handleChange = (e) => {

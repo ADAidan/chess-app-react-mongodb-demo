@@ -32,8 +32,8 @@ router.get('/', function(req, res, next) {
 
 router.post('/signup', async function(req, res, next) {
   try {
-    const { username } = req.body;
-    const user = new User({ username });
+    const { username, elo } = req.body;
+    const user = new User({ username, elo });
     await user.save();
     user.welcome();
     res.status(201).json({ message: 'Username set successfully' });

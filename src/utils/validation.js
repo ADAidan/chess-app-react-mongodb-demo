@@ -8,10 +8,6 @@ export const isValidUsername = async (username) => {
             return 'Username cannot be more than 15 charaters long';
         case !/^[a-zA-Z0-9_]+$/.test(username):
             return 'Username can only contain letters, numbers, and underscores';
-        case await checkIfUsernameExists(username):
-            console.log('successfully logged in')
-            sessionStorage.setItem('username', username);
-            return true;
         default:
             console.log('successfully created account')
             return true;
