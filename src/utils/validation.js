@@ -9,9 +9,12 @@ export const isValidUsername = async (username) => {
         case !/^[a-zA-Z0-9_]+$/.test(username):
             return 'Username can only contain letters, numbers, and underscores';
         case await checkIfUsernameExists(username):
-            return 'Username already exists';
+            console.log('successfully logged in')
+            sessionStorage.setItem('username', username);
+            return true;
         default:
-            return 'user created';
+            console.log('successfully created account')
+            return true;
     }
 };
 
