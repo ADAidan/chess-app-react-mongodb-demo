@@ -29,16 +29,14 @@ const HomePage = () => {
     e.preventDefault()
     console.log('Submitting form')
 
-    const isValid = isValidUsername(username)
-    console.log('isValid:', isValid)
+    const isValid = await isValidUsername(username)
     if (isValid !== true) {
       console.log('Invalid username:', isValid)
       return
     }
 
-    
-
-    try {
+    // Creates a user
+    /* try {
       const response = await axios.post('http://localhost:3000/signup', {
         username
       })
@@ -46,7 +44,7 @@ const HomePage = () => {
       console.log('Response:', response)
     } catch (error) {
       console.error('Error:', error)
-    }
+    } */
   };
 
   const handleChange = (e) => {

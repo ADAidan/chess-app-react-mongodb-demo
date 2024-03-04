@@ -1,4 +1,4 @@
-export const isValidUsername = (username) => {
+export const isValidUsername = async (username) => {
     switch (true) {
         case !username:
             return 'Username cannot be empty';
@@ -8,7 +8,19 @@ export const isValidUsername = (username) => {
             return 'Username cannot be more than 15 charaters long';
         case !/^[a-zA-Z0-9_]+$/.test(username):
             return 'Username can only contain letters, numbers, and underscores';
+        case await checkIfUsernameExists(username):
+            return 'Username already exists';
         default:
-            return true;
+            return 'user created';
+    }
+};
+
+export const checkIfUsernameExists = async (username) => {
+    const response = await fetch(`http://localhost:3000/users/${username}`);
+    const data = await response.json();
+    if (data.user) {
+        return true;
+    } else {
+        return false;
     }
 };
