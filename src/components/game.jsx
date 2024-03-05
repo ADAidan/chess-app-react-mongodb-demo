@@ -4,6 +4,7 @@ import { Chessboard } from 'react-chessboard';
 import { Chess } from 'chess.js';
 import MoveHistory from './move-history';
 import { ResignButton, DrawButton } from './buttons';
+import Player from './player';
 import gameOver from '../utils/gameOver';
 import './game.css';
 
@@ -18,29 +19,38 @@ const ChessGame = () => {
         'w': [], 
         'b': [] 
     });
-    const [playerData, setPlayerData] = useState({
-        player: {
-            name: 'Player',
-            elo: '1000',
-            color: 'w',
-        },
-        opponent: {
-            name: 'Opponent',
-            elo: '1000',
-            color: 'b',
-            isBot: true,
-        }
-    });
+    const [playerData, setPlayerData] = useState({});
+    const [opponentIsBot, setOponnentIsBot] = useState(false);
 
     const randomMoveDelay = 1000;
-    const playerColor = playerData.player.color;
+
+    useEffect(() => {
+        console.log(playerData)
+    }, [playerData]);
+
+    useEffect(() => {
+        getPlayerData(sessionStorage.getItem('username'));
+    }, []);
+
+    const getPlayerData = async (username) => {
+        const response = await fetch(`http://localhost:3000/users/${username}`);
+        const data = await response.json();
+        console.log('data', data)
+        setPlayerData(prevPlayerData => {
+            const playerData = { ...prevPlayerData };
+            playerData.name = data.user.username;
+            playerData.elo = data.user.elo;
+            playerData.color = 'w';
+            return playerData;
+        });
+    }
 
     //makes the first move in the premove queue
     useEffect(() => {
-        if (premoves[playerColor]) {
+        if (premoves[playerData.color]) {
             //first move in queue
-            const move = premoves[playerColor][0];
-            if (move && game.turn() === playerColor) {
+            const move = premoves[playerData.color][0];
+            if (move && game.turn() === playerData.color) {
                 //removes the highlighted premove
                 setPremoveSquares(prevPremoveSquares => {
                     const premoveSquares = { ...prevPremoveSquares };
@@ -53,7 +63,7 @@ const ChessGame = () => {
                 if(premove) {
                     setPremoves(prevPremoves => {
                         const premoves = { ...prevPremoves };
-                        premoves[playerColor].shift();
+                        premoves[playerData.color].shift();
                         return premoves;
                     });
                 };
@@ -64,7 +74,8 @@ const ChessGame = () => {
     //highlights the premoves
     useEffect(() => {
         const color = "rgba(235, 97, 80, .8)";
-        premoves[playerColor].map((move) => {
+        if (!premoves[playerData.color]) return;
+        premoves[playerData.color].map((move) => {
             setPremoveSquares(prevPremoveSquares => {
                 const premoveSquares = { ...prevPremoveSquares };
                 premoveSquares[move.from] = { backgroundColor: color}
@@ -83,6 +94,12 @@ const ChessGame = () => {
         });
     }, [lastMove]);
 
+    useEffect(() => {
+        if (true) {
+            setOponnentIsBot(true);
+        }
+    }, [opponentIsBot]);
+
     function makeAMove(move, fen) {
         //creates a copy of the game to mutate
         const gameCopy = new Chess(fen);
@@ -96,7 +113,7 @@ const ChessGame = () => {
                 }
             }
             //makes a random move for the bot
-            if (playerData.opponent.isBot) {
+            if (opponentIsBot) {
                 setTimeout(() => {
                     makeRandomMove(gameCopy);
                 }, randomMoveDelay);
@@ -124,7 +141,7 @@ const ChessGame = () => {
 
     function makeRandomMove(newGame) {
         //checks if it is the bots turn and makes a random move
-        if(playerData.opponent.isBot && newGame.turn() === playerData.opponent.color) {
+        if(opponentIsBot && newGame.turn() === 'b') {
             const possibleMoves = newGame.moves();
             const randomIndex = Math.floor(Math.random() * possibleMoves.length);
             const randomMove = possibleMoves[randomIndex];
@@ -134,7 +151,7 @@ const ChessGame = () => {
 
     function onSquareRightClick(square) {
         //clear premoves after right clicking the board
-        if (premoves[playerColor].length ?? premoveSquares) {
+        if (premoves[playerData.color].length ?? premoveSquares) {
             setPremoveSquares({});
             setPremoves({ 
                 'w': [], 
@@ -200,10 +217,10 @@ const ChessGame = () => {
                 <Link to='/lobby'>Chess</Link>
             </div>
             <div className='chessboard-container'>
-                <div>{playerData.opponent.name ?? 'Opponent'} {playerData.opponent.elo ? `(${playerData.opponent.elo})` : ''}</div>
+                {opponentIsBot ? <div>Bot (1000)</div> : <Player />}
                 <Chessboard 
                 position={game.fen()} 
-                boardOrientation={playerData.player.color === 'w' ? 'white' : 'black'}
+                boardOrientation={playerData.color === 'w' ? 'white' : 'black'}
                 onPieceDrop={onDrop} 
                 onPieceDragBegin={onPieceDragBegin}
                 onSquareRightClick={onSquareRightClick}
@@ -215,7 +232,7 @@ const ChessGame = () => {
                 }}
                 promotionDialogVariant='vertical'
                 id='BasicBoard'/>
-                <div>{playerData.player.name ?? 'Player' } {playerData.player.elo ? `(${playerData.player.elo})` : ''}</div>
+                <Player name={playerData.name} elo={playerData.elo}/>
             </div>
             <div className='sidebar-container'>
                 <MoveHistory history={moveHistory}/>
