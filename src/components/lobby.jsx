@@ -39,7 +39,10 @@ const Lobby = () => {
 				<h1 style={{
 					margin: '1rem',
 				}}>Joinable Games</h1>
-				<Link to='/create'>Create Game</Link>
+				<div className='lobby-buttons-container'>
+					<Link to='/create' className='lobby-button'>Create Game</Link>
+					<Link to='/offline' className='lobby-button'>Offline Game</Link>
+				</div>
 				{lobbies.map((lobby, index) => {
 					return (
 						<GameCard gameData={lobby} key={index} />
