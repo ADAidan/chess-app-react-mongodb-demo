@@ -1,3 +1,5 @@
+import React from 'react';
+import { Link } from 'react-router-dom';
 import './create-game.css';
 
 const CreateGame = () => {
@@ -22,6 +24,7 @@ const CreateGame = () => {
         <input type='text' id='increment' placeholder='Increment' />
         <button type='submit'>Create Game</button>
       </form>
+      <Link to='/lobby'>Cancel</Link>
     </div>
   );
 };
