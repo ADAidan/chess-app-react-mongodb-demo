@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import { isValidUsername, checkIfUsernameExists } from '../utils/validation'
+import './home-page.css'
 
 const HomePage = () => {
   const [data, setData] = useState([])
@@ -65,20 +66,19 @@ const HomePage = () => {
   };
 
   return (
-    <>
-      <div>{data.message}</div>
-      <form onSubmit={handleSubmit}>
-        <label>
-          Username:
-          <input
-            type="text"
-            value={username}
-            onChange={handleChange}
-          />
-        </label>
+    <div className='home-page-container'>
+      <h1>Welcome to chess</h1>
+      <form className='login-form-container' onSubmit={handleSubmit}>
+        <label htmlFor="username">Username:</label>
+        <input
+          type="text"
+          value={username}
+          onChange={handleChange}
+          placeholder='Enter username'
+        />
         <button type="submit">Next</button>
       </form>
-    </>
+    </div>
   )
 }
 
