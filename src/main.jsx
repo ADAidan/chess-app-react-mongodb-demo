@@ -10,6 +10,10 @@ import ChessGame from './components/game.jsx'
 import Lobby from './components/lobby.jsx'
 import CreateGame from './components/create-game.jsx'
 import OfflineGame from './components/offline-game.jsx'
+import '@fontsource/roboto/300.css';
+import '@fontsource/roboto/400.css';
+import '@fontsource/roboto/500.css';
+import '@fontsource/roboto/700.css';
 import './index.css'
 
 const router = createBrowserRouter([
