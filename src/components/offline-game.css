@@ -1,0 +1,44 @@
+.offline-game-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100%;
+}
+
+.difficulty-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+.buttons-container {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: center;
+    width: 100%;
+}
+
+.buttons-container button {
+    margin: 0 .5rem;
+    padding: 0.5rem 1.5rem;
+    border-radius: .5rem;
+}
+
+.easy-button {
+    background-color: #4CAF50;
+    color: #242424;
+}
+
+.medium-button {
+    background-color: #FFD700;
+    color: #242424;
+}
+
+.hard-button {
+    background-color: #FF6347;
+    color: #242424;
+}

@@ -8,7 +8,7 @@ import Player from './player';
 import gameOver from '../utils/gameOver';
 import './game.css';
 
-const ChessGame = () => {
+const ChessGame = ({ isOffline, botDifficulty }) => {
     const [game, setGame] = useState(new Chess());
     const [moveHistory, setMoveHistory] = useState([]);
     const [rightClickedSquares, setRightClickedSquares] = useState({});
@@ -21,8 +21,29 @@ const ChessGame = () => {
     });
     const [playerData, setPlayerData] = useState({});
     const [opponentIsBot, setOponnentIsBot] = useState(false);
+    const [opponentData, setOpponentData] = useState({});
 
     const randomMoveDelay = 1000;
+
+    useEffect(() => {
+        if (isOffline) {
+            setOponnentIsBot(true);
+            switch (botDifficulty) {
+                case 'easy':
+                    setOpponentData({ name: 'Bot', elo: 200 });
+                    break;
+                case 'medium':
+                    setOpponentData({ name: 'Bot', elo: 800 });
+                    break;
+                case 'hard':
+                    setOpponentData({ name: 'Bot', elo: 1200 });
+                    break;
+                default:
+                    setOpponentData({ name: 'Bot', elo: 1000 });
+                    break;
+            }
+        };
+    }, [isOffline, botDifficulty]);
 
     useEffect(() => {
         console.log(playerData)
@@ -93,12 +114,6 @@ const ChessGame = () => {
             [lastMove.to]: { backgroundColor: color },
         });
     }, [lastMove]);
-
-    useEffect(() => {
-        if (true) {
-            setOponnentIsBot(true);
-        }
-    }, [opponentIsBot]);
 
     function makeAMove(move, fen) {
         //creates a copy of the game to mutate
@@ -217,7 +232,7 @@ const ChessGame = () => {
                 <Link to='/lobby'>Chess</Link>
             </div>
             <div className='chessboard-container'>
-                {opponentIsBot ? <div>Bot (1000)</div> : <Player />}
+                {opponentIsBot ? <div>{opponentData.name} {`(${opponentData.elo})`}</div> : <Player />}
                 <Chessboard 
                 position={game.fen()} 
                 boardOrientation={playerData.color === 'w' ? 'white' : 'black'}
