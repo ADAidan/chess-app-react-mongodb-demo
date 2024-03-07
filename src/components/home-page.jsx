@@ -10,24 +10,6 @@ const HomePage = () => {
 
   const navigate = useNavigate();
 
-  useEffect(() => {
-    fetch(`http://localhost:3000/hello`)
-      .then((response) => {
-        console.log('Fetching data', response)
-        if (!response.ok) {
-          throw new Error('Network response was not ok')
-        }
-        return response.json()
-      })
-      .then((jsonData) => {
-        setData(jsonData)
-        console.log('Data:', jsonData)
-      })
-      .catch((error) => {
-        console.error('Error fetching data', error)
-      })
-  }, [])
-
   const handleSubmit = async (e) => {
     e.preventDefault()
     console.log('Submitting form')
