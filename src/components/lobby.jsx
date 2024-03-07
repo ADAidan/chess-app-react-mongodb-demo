@@ -40,7 +40,7 @@ const Lobby = () => {
 					margin: '1rem',
 				}}>Joinable Games</h1>
 				<div className='lobby-buttons-container'>
-					<Link to='/create' className='lobby-button'>Create Game</Link>
+					<Link to='/create-game' className='lobby-button'>Create Game</Link>
 					<Link to='/offline' className='lobby-button'>Offline Game</Link>
 				</div>
 				{lobbies.map((lobby, index) => {

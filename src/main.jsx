@@ -8,6 +8,7 @@ import {
 } from 'react-router-dom'
 import ChessGame from './components/game.jsx'
 import Lobby from './components/lobby.jsx'
+import CreateGame from './components/create-game.jsx'
 import './index.css'
 
 const router = createBrowserRouter([
@@ -23,6 +24,10 @@ const router = createBrowserRouter([
   {
     path: '/chess',
     element: <ChessGame />,
+  },
+  {
+    path: '/create-game',
+    element: <CreateGame />,
   }
 ])
 
