@@ -1,20 +1,18 @@
+import React, { useState } from 'react';
+import BotDifficulty from './bot-difficulty';
+import Game from './game';
 import './offline-game.css';
 
 const OfflineGame = () => {
-    return (
-        <div className='offline-game-container'>
-            <h1>Offline Game</h1>
-            <h2>Play a game of chess against the computer</h2>
-            <div className='difficulty-container'>
-                <p>Chose Difficulty:</p>
-                <div className='buttons-container'>
-                    <button className='easy-button'>Easy</button>
-                    <button className='medium-button'>Medium</button>
-                    <button className='hard-button'>Hard</button>
-                </div>
-            </div>
-        </div>
-    );
+	const [difficulty, setDifficulty] = useState('');
+
+	return (
+		<>
+			{!difficulty ? 
+			<BotDifficulty setDifficulty={setDifficulty} /> : 
+			<Game isOffline={true} botDifficulty={difficulty}/>}
+		</>
+	);
 };
 
 export default OfflineGame;
