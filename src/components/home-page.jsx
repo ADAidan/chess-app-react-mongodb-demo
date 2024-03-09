@@ -7,8 +7,16 @@ import './home-page.css'
 const HomePage = () => {
   const [data, setData] = useState([])
   const [username, setUsername] = useState('')
+  const [usernameError, setUsernameError] = useState('')
 
   const navigate = useNavigate();
+
+  //default to lobby if user is logged in
+  useEffect(() => {
+    if(sessionStorage.getItem('username')) {
+      navigate('/lobby');
+    }
+  }, [])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -16,6 +24,7 @@ const HomePage = () => {
 
     const isValid = await isValidUsername(username)
     if (isValid !== true) {
+      setUsernameError(isValid)
       console.log('Invalid username:', isValid)
       return
     }
@@ -45,6 +54,7 @@ const HomePage = () => {
 
   const handleChange = (e) => {
     setUsername(e.target.value)
+    setUsernameError('')
   };
 
   return (
@@ -57,7 +67,10 @@ const HomePage = () => {
           value={username}
           onChange={handleChange}
           placeholder='Enter username'
+          className={usernameError ? 'username-input error' : 'username-input'}
         />
+        {usernameError && 
+        <p className='error-message'>{usernameError}</p>}
         <button type="submit">Next</button>
       </form>
     </div>

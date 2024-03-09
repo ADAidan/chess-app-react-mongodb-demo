@@ -16,10 +16,25 @@
     margin-top: 20px;
 }
 
-.login-form-container input {
-    margin: .5rem 0 1rem;
+.username-input {
+    margin: .5rem 0 .25rem;
     padding: 0.5rem 0;
     border: #c0c0c0 1px solid;
     border-radius: .5rem;
     width: 100%;
+}
+
+.username-input:focus {
+    outline: none;
+    border-color: #007bff;
+}
+
+.error, .error:focus {
+    border-color: red;
+}
+
+.error-message {
+    color: red;
+    font-size: 0.8rem;
+    margin-top: 0.5rem;
 }
