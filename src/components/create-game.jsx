@@ -45,13 +45,12 @@ const CreateGame = () => {
       timeLimit,
       increment,
     };
-    
+
     console.log('gameData:', gameData);
 
     // Send gameData to server
     try {
-      const response = axois.post('http://localhost:3000/create-game', gameData);
-      console.log('Response:', response);
+      axois.post('http://localhost:3000/create-game', gameData);
     } catch (error) {
       console.error('Error:', error);
     }
