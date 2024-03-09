@@ -16,12 +16,14 @@ const CreateGame = () => {
     <div className='create-game-container'>
       <h1>Create Game</h1>
       <form className='form-container' onSubmit={handleSubmit}>
-        <label htmlFor='game-name'></label>
-        <input type='text' id='game-name' placeholder='Game Name' />
-        <label htmlFor='time-limit'></label>
-        <input type='text' id='time-limit' placeholder='Time Limit' />
-        <label htmlFor='increment'></label>
-        <input type='text' id='increment' placeholder='Increment' />
+        <div className='time-limit-container'>
+          <label htmlFor='time-limit-minutes'></label>
+          <input type='text' id='time-limit-minutes' placeholder='Minutes' />
+          <label htmlFor='time-limit-seconds'></label>
+          <input type='text' id='time-limit-seconds' placeholder='Seconds' />
+          <label htmlFor='increment'></label>
+          <input type='text' id='increment' placeholder='Increment' />
+        </div>
         <button type='submit'>Create Game</button>
       </form>
       <Link to='/lobby'>Cancel</Link>

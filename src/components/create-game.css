@@ -14,11 +14,30 @@
     width: 100%;
 }
 
+.time-limit-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+    width: 50%;
+}
+
+.time-limit-container > * {
+    margin: 0;
+}
+
 .form-container input {
-    min-width: 250px;
+    min-width: 50px;
     width: 25%;
-    margin: 10px 0;
+    margin: 5px;
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: .25rem;
+    flex: 1;
+}
+
+@media (max-width: 768px) {
+    .form-container .time-limit-container {
+        width: 90%;
+    }
 }
