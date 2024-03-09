@@ -1,37 +1,32 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from 'react-router-dom';
 import GameCard from './game-card';
 import './lobby.css';
 
 const Lobby = () => {
-	const [lobbies, setLobbies] = useState([
-		{
-			gameName: 'ADAidan\'s game',
-			timeLimit: '10:00',
-			increment: '5',
-			players: {
-				player1: {
-					name : 'ADAidan',
-					elo: '1200',
-				},
-				player2: {
-					name: 'Player 2',
-					elo: '1150',
-				}
-			}
-		},
-		{
-			gameName: 'Player 1\'s game',
-			timeLimit: '10:00',
-			increment: '0',
-			players: {
-				player1: {
-					name : 'Player 1',
-					elo: '950',
-				},
-			}
-		},
-	]);
+	const [lobbies, setLobbies] = useState([]);
+
+	useEffect(() => {
+		getJoinableGames();
+	}, []);
+
+	//get joinable games from server
+	const getJoinableGames = async () => {
+		try {
+			const response = await fetch('http://localhost:3000/lobby-games');
+			const data = await response.json();
+			const updatedLobbies = data.games.map((game) => ({
+				'player1': game.player1,
+				'player2': game.player2,
+				'gameName': game.gameName,
+				'timeLimit': game.timeLimit,
+				'increment': game.increment,
+			}));
+			setLobbies(updatedLobbies);
+		} catch (error) {
+			console.log('Error:', error);
+		}
+	};
 
 	return (
 		<>
@@ -45,7 +40,7 @@ const Lobby = () => {
 				</div>
 				{lobbies.map((lobby, index) => {
 					return (
-						<GameCard gameData={lobby} key={index} />
+						<GameCard gameData={lobby} key={index}/>
 					)
 				})}
 			</div>
