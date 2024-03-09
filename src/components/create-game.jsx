@@ -1,8 +1,11 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import axois from 'axios';
 import './create-game.css';
 
 const CreateGame = () => {
+
+  const navigate = useNavigate();
 
   const timer = (minutes, seconds) => {
     switch (true) {
@@ -35,7 +38,25 @@ const CreateGame = () => {
     const timeLimitSeconds = e.target[1].value || 0;
     const increment = e.target[2].value || 0;
     const timeLimit = timer(timeLimitMinutes, timeLimitSeconds);
-    console.log(gameName, timeLimit, `${increment}s`);
+    const gameData = {
+      gameID: Math.floor(Math.random() * 1000000),
+      player1: username,
+      gameName,
+      timeLimit,
+      increment,
+    };
+    
+    console.log('gameData:', gameData);
+
+    // Send gameData to server
+    try {
+      const response = axois.post('http://localhost:3000/create-game', gameData);
+      console.log('Response:', response);
+    } catch (error) {
+      console.error('Error:', error);
+    }
+
+    navigate('/lobby');
   };
 
   return (

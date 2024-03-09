@@ -46,14 +46,24 @@ router.post('/signup', async function(req, res, next) {
 
 router.post('/create-game', async function(req, res, next) {
   try {
-    const { gameID, player1, player2, gameName, timeLimit, increment } = req.body;
-    const game = new JoinableGame({ gameID, player1, player2, gameName, timeLimit, increment });
+    const { gameID, player1, gameName, timeLimit, increment } = req.body;
+    const game = new JoinableGame({ gameID, player1, gameName, timeLimit, increment });
     await game.save();
     game.alert();
     res.status(201).json({ message: 'Game created successfully' });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Failed to create game' });
+  }
+});
+
+router.get('/lobby-games', async function(req, res, next) {
+  try {
+    const games = await JoinableGame.find();
+    res.status(200).json({ games });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to retrieve games' });
   }
 });
 

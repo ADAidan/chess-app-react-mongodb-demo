@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+const mongoose = require('mongoose');
 
 const JoinableGameSchema = new mongoose.Schema({
     gameID: String,
@@ -6,7 +6,7 @@ const JoinableGameSchema = new mongoose.Schema({
     player2: String,
     gameName: String,
     timeLimit: String,
-    increment: number,
+    increment: Number,
 });
 
 JoinableGameSchema.methods.alert = function() {
