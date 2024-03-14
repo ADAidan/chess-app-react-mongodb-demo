@@ -16,6 +16,8 @@ const Lobby = () => {
 			const response = await fetch('http://localhost:3000/lobby-games');
 			const data = await response.json();
 			const updatedLobbies = data.games.map((game) => ({
+				'gameID': game.gameID,
+				'owner': game.player1,
 				'player1': game.player1,
 				'player2': game.player2,
 				'gameName': game.gameName,

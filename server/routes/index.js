@@ -67,4 +67,17 @@ router.get('/lobby-games', async function(req, res, next) {
   }
 });
 
+router.put('/lobby-games/:gameID/leave', async function(req, res, next) {
+  try {
+    const { gameID } = req.params;
+    const game = await JoinableGame.findOne({ gameID });
+    game.leave();
+    res.status(200).json({ message: 'Left game successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to leave game' });
+  }
+});
+
+
 module.exports = router;

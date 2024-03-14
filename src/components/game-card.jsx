@@ -7,6 +7,7 @@ const GameCard = ({gameData}) => {
 	const [player2, setPlayer2] = useState();
 
 	useEffect(() => {
+		console.log(gameData)
 		if (!gameData) return;
 		if (!gameData.player1) return;
 
@@ -41,6 +42,21 @@ const GameCard = ({gameData}) => {
 		return player;
     }
 
+	const didPlayerJoin = (player) => {
+		if (!player) return false;
+		if (player.name === sessionStorage.getItem('username')) return true;
+		return false;
+	};
+
+	const isPlayerOwner = (player) => {
+		if (!player) return false;
+		if (player.name === sessionStorage.getItem('username')) return true;
+		return false;
+	};
+
+	const handleClick = async () => {
+	};
+
 	return (
 		<>
 			<div className='game-card'>
@@ -55,8 +71,13 @@ const GameCard = ({gameData}) => {
 						<p>Increment: {gameData.increment}s</p>
 					</div>
 					<div className='game-card-button'>
-						<Link to='/chess'>Join Game</Link>
-				</div>
+						{didPlayerJoin(player1) || didPlayerJoin(player2) ? 
+						<button onClick={handleClick} style={{
+							backgroundColor: 'red',
+						}}>Leave Game</button> : 
+						<Link to='/chess'>Join Game</Link>}
+
+					</div>
 				</div>
 				<div className='game-card-details' style={{
 					flex: 1,
